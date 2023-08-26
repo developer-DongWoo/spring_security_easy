@@ -86,6 +86,8 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
         String base64EncodedSecretKey = tokenProvider.encodedBase64SecretKey();
         Jws<Claims> claims = tokenProvider.getClaims(refreshToken, base64EncodedSecretKey);
 
+        //Todo refresh token을 DB에 저장해두었다면 저장되어있는 refreshToken과 대조할 수 있습니다.
+
         // 토큰 만료 검증
         if (tokenProvider.isExpired(claims)) {
             throw new Exception("refresh token is expired.");

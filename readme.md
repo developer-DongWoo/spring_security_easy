@@ -41,7 +41,10 @@ AllowedOrigins 의 설정 이외에, allowed method 를 비롯한
 
 4. LoginDto를 통해 로그인 시 받을 값을 정의할 수 있습니다.
 5. LoginResponseDto를 통해 로그인 성공 시 반환할 값을 정의할 수 있습니다.
-6. TokenProvider는 토큰의 생성과 인증 등의 기능을 담당합니다. 여기서 토큰 생성 시 토큰 안에 넣을 정보를 정의할 수 있습니다.
+6. TokenProvider는 토큰의 생성과 인증 등의 기능을 담당합니다. 
+여기서 토큰 생성 시 토큰 안에 넣을 정보를 정의할 수 있습니다.
+verifyRefreshToken에서는 Refresh Token을 DB와 연관지어 검증하도록 설정할 수 있습니다.
+만약 토큰이 탈취당한 경우 DB에 저장된 Refresh Token을 삭제하여 AccessToken 재발급을 방지합니다.
 7. role 패키지에서 권한을 정의할 수 있습니다. 현재 USER, PARTNER로 정의되어 있으며, 만약 PARTNER 회원이라면 USER와 PARTNER 권한 모두를 가집니다.
 8. TokenPrefix를 통해 토큰의 인증타입을 설정할 수 있습니다.
 9. ExceptionCode enum 파일을 이용해서 다양한 예외코드를 추가할 수 있습니다.
