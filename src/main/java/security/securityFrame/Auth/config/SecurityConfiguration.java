@@ -15,6 +15,7 @@ import org.springframework.security.config.annotation.web.configurers.Expression
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -24,7 +25,9 @@ import security.securityFrame.Auth.handler.MemberAccessDeniedHandler;
 import security.securityFrame.Auth.handler.MemberAuthenticationEntryPoint;
 import security.securityFrame.Auth.handler.MemberAuthenticationFailureHandler;
 import security.securityFrame.Auth.handler.MemberAuthenticationSuccessHandler;
+import security.securityFrame.Auth.oauth2.OAuth2MemberSuccessHandler;
 import security.securityFrame.Auth.provider.TokenProvider;
+import security.securityFrame.Auth.role.RoleService;
 import security.securityFrame.Auth.utils.MemberAuthorityUtil;
 import security.securityFrame.member.service.MemberService;
 
@@ -73,15 +76,15 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                             "=; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=0;"); // HttpOnly 옵션을 사용함으로써, 자바스크립트를 이용한 접근이 불가능해짐
                     response.setHeader("Access-Control-Allow-Origin", COOKIE_ALLOW_ORIGIN.getOrigin());
                 }))
-                .logoutSuccessUrl(COOKIE_ALLOW_ORIGIN.getOrigin() + "/");
+                .logoutSuccessUrl(COOKIE_ALLOW_ORIGIN.getOrigin() + "/")
 
-//                .and()
-//                .authorizeRequests(this::configureAuthorization)
-//                .oauth2Login(oAuth2 -> oAuth2
-//                        .successHandler(new OAuth2MemberSuccessHandler(
-//                                context.getBean(MemberService.class), context.getBean(RoleService.class), tokenProvider)
-//                        )
-//                );
+                .and()
+                .authorizeRequests(this::configureAuthorization)
+                .oauth2Login(oAuth2 -> oAuth2
+                        .successHandler(new OAuth2MemberSuccessHandler(
+                                context.getBean(MemberService.class), context.getBean(RoleService.class), tokenProvider)
+                        )
+                );
     }
 
     private void configureAuthorization
@@ -117,7 +120,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
             // Spring Security Filter Chain에 추가
             builder.addFilter(jwtAuthenticationFilter)
-//                    .addFilterAfter(jwtVerificationFilter, OAuth2LoginAuthenticationFilter.class)
+                    .addFilterAfter(jwtVerificationFilter, OAuth2LoginAuthenticationFilter.class)
                     .addFilterAfter(jwtVerificationFilter, JwtAuthenticationFilter.class);
         }
     }
@@ -136,6 +139,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(2000L);
+        //Todo 헤더에 들어갈 key값을 지정할 수 있으며, 이외의 값이 들어있으면 차단
         configuration.setAllowedHeaders(Arrays.asList("*"));
 //        configuration.setAllowedHeaders(Arrays.asList("Origin", "X-Requested-With", "Content-Type", "Accept", "Authorization", "Refresh", "Set-Cookie"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE"));

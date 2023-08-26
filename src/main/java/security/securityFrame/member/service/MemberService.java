@@ -71,4 +71,13 @@ public class MemberService {
         if (findMember.isPresent()) return findMember.get();
         else throw new BusinessLogicException(ExceptionCode.BAD_REQUEST);
     }
+
+    public Member findMemberByEmail(String email) {
+        Optional<Member> member = memberRepository.findByEmail(email);
+
+        if (member.isPresent()){
+            return member.get();
+        }
+        else throw new BusinessLogicException(ExceptionCode.NOT_FOUND_ERROR);
+    }
 }
