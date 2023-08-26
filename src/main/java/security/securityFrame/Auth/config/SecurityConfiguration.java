@@ -70,7 +70,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .logoutUrl("/logout")
                 .addLogoutHandler(((request, response, authentication) -> {
                     response.setHeader("Set-Cookie", REFRESH.getType() +
-                            "=; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=0;");
+                            "=; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=0;"); // HttpOnly 옵션을 사용함으로써, 자바스크립트를 이용한 접근이 불가능해짐
                     response.setHeader("Access-Control-Allow-Origin", COOKIE_ALLOW_ORIGIN.getOrigin());
                 }))
                 .logoutSuccessUrl(COOKIE_ALLOW_ORIGIN.getOrigin() + "/");
