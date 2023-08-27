@@ -10,6 +10,7 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
+import security.securityFrame.Auth.config.OAuth2Configuration;
 import security.securityFrame.Auth.provider.TokenProvider;
 import security.securityFrame.Auth.role.MemberRole;
 import security.securityFrame.Auth.role.Role;
@@ -32,6 +33,9 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
     private final RoleService roleService;
     private final TokenProvider tokenProvider;
 
+
+    //구글 화면에서 로그인 성공 시, 가져올 리소스를 설정(예시에서는 email만 가져옴)하고 가입된 이메일인지 검증 후 가입을 하고,
+    //가입이 안되어있다면 회원가입 후 가입된 멤버 정보를, 가입이 되어있다면 가입되어있는 멤버 정보를 이용해 토큰을 생성하고, redirect 로 보낸다.
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
@@ -43,6 +47,7 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
 
         Member member;
 
+
         // 가입했던 사람인지?
         if (memberService.isExistMember(email)) {
             member = memberService.findMemberByEmail(email);
@@ -53,6 +58,8 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
 
         redirect(request,response,member);
     }
+
+    //구글에서 받아온 사용자 정보를 이용해 토큰을 생성하고 헤더를 설정한다. 그런 다음 createUri() 로 전달한다.
     private void redirect(HttpServletRequest request,
                           HttpServletResponse response,
                           Member member) throws IOException {
@@ -71,6 +78,7 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
         String uri = createURI(accessToken);
 
         log.info("# Google Authenticated Successfully!");
+        log.info(uri);
         getRedirectStrategy().sendRedirect(request, response, uri);
 
     }
@@ -101,6 +109,7 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
         return password;
     }
 
+    //리디렉션 될 uri를 만들어서 리디렉트
     private String createURI(String accessToken) {
         MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
         queryParams.add("access_token", accessToken);
@@ -108,10 +117,10 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
         // 컨트롤러로 보낸 후 프론트로 리다이렉트 시도
         return UriComponentsBuilder.newInstance()
                 // 프론트 도메인
-                .scheme("http")
-                .host("http://localhost:8081") // s3 엔드포인트
-//                .port(5173)
-                .path("/oauth2/authorization/google/success")
+                .scheme(OAuth2Configuration.SCHEME.getValue())
+                .host(OAuth2Configuration.HOST.getValue())
+                .port(OAuth2Configuration.PORT.getValue())
+                .path(OAuth2Configuration.PATH.getValue())
                 .queryParams(queryParams)
                 .build().toUri()
                 .toString();

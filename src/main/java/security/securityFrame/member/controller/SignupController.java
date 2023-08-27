@@ -24,7 +24,7 @@ public class SignupController {
 
     private final MemberMapper memberMapper;
     private final MemberService memberService;
-    @PostMapping("/auth/signup")
+    @PostMapping("/signup")
     public ResponseEntity signup(@Valid @RequestBody SignupDto signupDto){
         Member requestMember = memberMapper.signupDtoToMember(signupDto);
         Member signupMember = memberService.createMember(requestMember);

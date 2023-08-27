@@ -24,10 +24,9 @@ spring:
       client:
         registration:
           google:
-            # ??? ???
-            redirect-uri: http://ec2-52-78-205-102.ap-northeast-2.compute.amazonaws.com:8080/login/oauth2/code/google
-            client-id: ${G_CLIENT_ID}
-            client-secret: ${G_CLIENT_SECRET}
+            redirect-uri: http://localhost:8080/login/oauth2/code/google
+            client-id: ${GOOGLE_OAUTH2_CLIENT_ID}
+            client-secret: ${GOOGLE_OAUTH2_PASSWORD}
             scope:
               - email
   sql:

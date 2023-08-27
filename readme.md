@@ -19,7 +19,7 @@ Easy Mode의 개발 필요성을 느끼게 되었습니다.
 주의: 귀하의 프로젝트에 적용하려면,
 경로를 수정하거나 일부 코드가 수정되어야 할 수 있습니다.
 
-## 의존성
+## 주요 의존성
 <hr>
 -DataBase : H2
 
@@ -30,7 +30,9 @@ Easy Mode의 개발 필요성을 느끼게 되었습니다.
 
 ## 사용법
 <hr>
-
+<h3 style="color:green">
+- config 패키지의 AllowedOrigins, OAuth2Configuration, SecurityConfiguration 을 이용해 손쉽게 Security 세팅이 가능하도록 설계하였습니다.
+</h3>
 1. application.yml 의 ${JWT_SECRET_KEY}를 사용하기 위해 환경변수를 설정해줍니다.
 2. AllowedOrigins (security.securityFrame.Auth.config 경로)에서 접근 가능한 
 Origin을 설정해줍니다.(예:프론트엔드 측 url) 이외의 origin에서 요청이 오면 차단할 수 있습니다.
@@ -52,3 +54,7 @@ verifyRefreshToken에서는 Refresh Token을 DB와 연관지어 검증하도록 
 수정일이 입력됩니다.
 11. Member 패키지에서 회원가입을 위한 기본적인 내용이 포함되어있습니다. 회원가입 시
 받을 값을 추가할 수 있습니다.
+
+12. OAuth2Configuration ENUM 파일에서는 구글 OAUTH 리디렉션 URL을 설정할 수 있습니다.
+13. OAuth2MemberSuccessHandler 클래스에서 더 상세한 설정이 가능합니다.
+14. application.yml 에서 redirect-uri, 구글에서 생성한 client-id, client-secret, scope를 환경변수에서 가져올 수 있도록 해야합니다.
